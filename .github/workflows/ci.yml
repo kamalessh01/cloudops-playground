@@ -11,8 +11,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Display directory tree
+        run: ls -R
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -21,20 +24,20 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        working-directory: app-backend
+        working-directory: ./app-backend
 
       - name: Run lint/tests
         run: |
           npm run lint || true
           npm test || echo "No tests configured yet"
-        working-directory: app-backend
+        working-directory: ./app-backend
 
       - name: Archive build artifacts
         if: success()
         run: |
           mkdir -p build-artifacts
           zip -r build-artifacts/backend.zip .
-        working-directory: app-backend
+        working-directory: ./app-backend
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
