@@ -1,0 +1,7 @@
+---
+- name: Configure backend environment
+  hosts: backend
+  become: yes
+  roles:
+    - common
+    - backend

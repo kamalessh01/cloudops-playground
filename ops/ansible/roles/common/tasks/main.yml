@@ -1,0 +1,20 @@
+---
+- name: Update apt packages
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Install essential packages
+  apt:
+    name:
+      - git
+      - curl
+      - python3-pip
+      - nginx
+    state: present
+
+- name: Ensure Nginx service is running
+  service:
+    name: nginx
+    state: started
+    enabled: yes

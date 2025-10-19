@@ -1,9 +1,3 @@
-##############################################
-# File: infra/network.tf
-# Purpose: subnets + internet gateway + routing
-##############################################
-
-# 1. Internet Gateway (gives VPC internet access)
 resource "aws_internet_gateway" "main" {
   vpc_id = aws_vpc.main.id
 
@@ -12,30 +6,18 @@ resource "aws_internet_gateway" "main" {
   }
 }
 
-# 2. Public Subnets across two Availability Zones
-resource "aws_subnet" "public_1" {
+resource "aws_subnet" "public" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
   availability_zone       = "ca-central-1a"
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "public-subnet-1"
+    Name = "public-subnet"
   }
 }
 
-resource "aws_subnet" "public_2" {
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = "10.0.2.0/24"
-  availability_zone       = "ca-central-1b"
-  map_public_ip_on_launch = true
 
-  tags = {
-    Name = "public-subnet-2"
-  }
-}
-
-# 3. Route Table for public subnets
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
@@ -49,13 +31,7 @@ resource "aws_route_table" "public" {
   }
 }
 
-# 4. Associate route table with both public subnets
-resource "aws_route_table_association" "public_1" {
-  subnet_id      = aws_subnet.public_1.id
-  route_table_id = aws_route_table.public.id
-}
-
-resource "aws_route_table_association" "public_2" {
-  subnet_id      = aws_subnet.public_2.id
+resource "aws_route_table_association" "public" {
+  subnet_id      = aws_subnet.public.id
   route_table_id = aws_route_table.public.id
 }
