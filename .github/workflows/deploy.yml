@@ -1,32 +1,41 @@
-name: Backend Deployment
+name: Deploy to AWS
 
 on:
-  workflow_run:
-    workflows: ["Backend CI"]
-    types:
-      - completed
+  push:
+    branches: [ main ]
+
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Write private key to file
-        run: |
-          echo "${{ secrets.EC2_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-
-      - name: Connect to EC2 and deploy
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Configure AWS credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key_path: private_key.pem
-          script: |
-            cd ~/cloudops-playground
-            git pull origin main
-            ansible-playbook site.yml --ask-become-pass=false
+          role-to-assume: arn:aws:iam::<your-account-id>:role/GitHubOIDCDeployRole
+          aws-region: ca-central-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init & Apply
+        run: |
+          cd cloudops-playground/infra
+          terraform init -input=false
+          terraform apply -auto-approve -input=false
+
+      - name: Install Ansible
+        run: sudo apt-get update && sudo apt-get install -y ansible
+
+      - name: Run Ansible Playbook
+        run: |
+          cd cloudops-playground/ops/ansible
+          chmod +x aws_inventory.sh
+          ansible-playbook -i <(./aws_inventory.sh) site.yml
