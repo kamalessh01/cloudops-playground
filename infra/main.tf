@@ -11,7 +11,7 @@ terraform {
     }
   }
   backend "s3" {
-    bucket         = "cloudops-terraform-state-144618663920"
+    bucket         = "cloudops-terraform-state-425221470048"
     key            = "infra/terraform.tfstate"
     region         = "ca-central-1"
     dynamodb_table = "terraform-locks"
