@@ -4,7 +4,7 @@ variable "instance_type" {
 
 resource "aws_key_pair" "cloudops_key" {
   key_name   = "cloudops-key"
-  public_key = file("~/.ssh/cloudops-key.pub")
+  public_key = file("${path.module}/keys/cloudops-key.pub")
 }
 
 resource "aws_security_group" "ssh_access" {
