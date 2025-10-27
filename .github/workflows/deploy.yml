@@ -27,7 +27,7 @@ jobs:
 
       - name: Terraform Init & Apply
         run: |
-          cd cloudops-playground/infra
+          cd infra
           terraform init -input=false
           terraform apply -auto-approve -input=false
 
@@ -36,6 +36,5 @@ jobs:
 
       - name: Run Ansible Playbook
         run: |
-          cd cloudops-playground/ops/ansible
-          chmod +x aws_inventory.sh
-          ansible-playbook -i <(./aws_inventory.sh) site.yml
+          cd ops/ansible
+          chmod
