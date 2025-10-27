@@ -37,4 +37,5 @@ jobs:
       - name: Run Ansible Playbook
         run: |
           cd ops/ansible
-          chmod
+          chmod +x aws_inventory.sh
+          ansible-playbook -i <(./aws_inventory.sh) site.yml
