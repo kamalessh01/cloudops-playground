@@ -1,5 +1,5 @@
 variable "instance_type" {
-  default = "t2.micro"
+  default = "t3.micro"
 }
 
 resource "aws_key_pair" "cloudops_key" {
