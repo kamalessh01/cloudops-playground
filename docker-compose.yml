@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  backend:
+    build: ./app-backend
+    container_name: cloudops-backend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+  nginx:
+    build: ./nginx
+    container_name: cloudops-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
